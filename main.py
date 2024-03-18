@@ -125,7 +125,47 @@ def draw_text_middle(text, size, color, surface):
     pass
 
 
-def draw_grid(surface, grid, row, col):
+def draw_grid(surface, grid):
+    sx = top_left_x
+    sy = top_left_y
+
+    # Draw horizontal lines
+    for i in range(len(grid)):
+        pygame.draw.line(
+            surface,
+            (12, 12, 12),
+            (sx, sy + i * block_size),
+            (sx + play_width, sy + i * block_size),
+        )
+
+        # Draw vertical lines
+        for j in range(len(grid[i])):
+            pygame.draw.line(
+                surface,
+                (12, 12, 12),
+                (sx + j * block_size, sy),
+                (sx + j * block_size, sy + play_height),
+            )
+
+
+def clear_rows(grid, locked):
+    pass
+
+
+def draw_next_shape(shape, surface):
+    pass
+
+
+def draw_window(surface, grid):
+    surface.fill((25, 25, 25))
+
+    pygame.font.init()
+    font = pygame.font.SysFont("roboto", 60)
+    label = font.render("Tetris", 1, (255, 255, 255))
+
+    # Draw the label onto the surface, horizontally centered within a specific area, and vertically positioned at 30 pixels from the top of the area.
+    surface.blit(label, (top_left_x + play_width / 2 - (label.get_width() / 2), 30))
+
     for i in range(len(grid)):
         for j in range(len(grid[i])):
             pygame.draw.rect(
@@ -140,28 +180,13 @@ def draw_grid(surface, grid, row, col):
                 0,
             )
 
+    # Play area height with an additional space at the bottom
+    play_area_height = play_height - block_size
+
     pygame.draw.rect(
-        surface, (255, 0, 0), (top_left_x, top_left_y, play_width, play_height), 4
+        surface, (50, 50, 50), (top_left_x, top_left_y, play_width, play_height), 4
     )
 
-
-def clear_rows(grid, locked):
-    pass
-
-
-def draw_next_shape(shape, surface):
-    pass
-
-
-def draw_window(surface, grid):
-    surface.fill((0, 0, 0))
-
-    pygame.font.init()
-    font = pygame.font.SysFont("comicsans", 60)
-    label = font.render("Tetris", 1, (255, 255, 255))
-
-    # Draw the label onto the surface, horizontally centered within a specific area, and vertically positioned at 30 pixels from the top of the area.
-    surface.blit(label, (top_left_x + play_width / 2 - (label.get_width() / 2), 30))
     draw_grid(surface, grid)
     pygame.display.update()
 

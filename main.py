@@ -185,7 +185,29 @@ def draw_grid(surface, grid):
 
 
 def clear_rows(grid, locked):
-    pass
+    inc = 0  # Counter for the number of rows cleared
+
+    # Iterate over each row of the grid starting from the bottom
+    for i in range(len(grid) -1, -1, -1):
+        row = grid[i]
+        if (0, 0, 0) not in row:
+            inc += 1
+            ind = i  # Store the index of the cleared row
+            for j in range(len(row)):
+                try:  # Try to delete the corresponding locked position
+                    del locked[(j, i)]
+                except:  # Skip if the position does not exist in locked
+                    continue
+
+    # If rows were cleared, update locked positions
+    if inc > 0:
+        for key in sorted(list(locked), key=lambda x: x[1])[::-1]:
+            x, y = key
+            # If the row of the locked position is below the cleared row,
+            # update the position to move it down by the number of cleared rows
+            if y < ind:
+                newKey = (x, y + inc)
+                locked[newKey] = locked.pop(key)
 
 
 def draw_next_shape(shape, surface):
@@ -309,6 +331,7 @@ def main(win):
             current_piece = next_piece
             next_piece = get_shape()
             change_piece = False
+            clear_rows(grid, locked_positions)
 
         draw_window(win, grid)
         draw_next_shape(next_piece, win)

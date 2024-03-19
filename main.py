@@ -108,12 +108,15 @@ def convert_shape_format(shape):
     positions = []
     format = shape.shape[shape.rotation % len(shape.shape)]
 
+    # Iterate over each line of the Tetromino shape format
     for i, line in enumerate(format):
         row = list(line)
+        # Iterate over each column of the line
         for j, column in enumerate(row):
             if column == "0":
                 positions.append((shape.x + j, shape.y + i))
 
+    # Adjust positions to match grid coordinates
     for i, pos in enumerate(positions):
         positions[i] == (pos[0] - 2, pos[1] - 4)
 
@@ -186,7 +189,26 @@ def clear_rows(grid, locked):
 
 
 def draw_next_shape(shape, surface):
-    pass
+    font = pygame.font.SysFont("roboto", 22)
+    label = font.render("Next Shape", 1, (255, 255, 255))
+
+    sx = top_left_x + play_width + 50
+    sy = top_left_y + play_height / 2 - 250
+    format = shape.shape[shape.rotation % len(shape.shape)]
+
+    # Draw each block of the next shape preview
+    for i, line in enumerate(format):
+        row = list(line)
+        for j, column in enumerate(row):
+            if column == "0":
+                pygame.draw.rect(
+                    surface,
+                    shape.color,
+                    (sx + j * block_size, sy + i * block_size, block_size, block_size),
+                    0,
+                )
+
+    surface.blit(label, (sx + 10, sy - 20))
 
 
 def draw_window(surface, grid):
@@ -221,7 +243,6 @@ def draw_window(surface, grid):
     )
 
     draw_grid(surface, grid)
-    pygame.display.update()
 
 
 def main(win):
@@ -290,6 +311,8 @@ def main(win):
             change_piece = False
 
         draw_window(win, grid)
+        draw_next_shape(next_piece, win)
+        pygame.display.update()
 
         if check_lost(locked_positions):
             run = False

@@ -25,6 +25,8 @@ play_width = 300  # meaning 300 // 10 = 30 width per block
 play_height = 600  # meaning 600 // 20 = 20 height per block
 block_size = 30
 
+game_font = "roboto"
+
 top_left_x = (s_width - play_width) // 2
 top_left_y = s_height - play_height
 
@@ -157,15 +159,15 @@ def get_shape():
     return Piece(5, 0, random.choice(shapes))
 
 
-def draw_text_middle(text, size, color, surface):
-    font = pygame.font.SysFont("roboto", size, bold=True)
+def draw_text_middle(text, size, color, surface, bold=True):
+    font = pygame.font.SysFont(game_font, size)
     label = font.render(text, 1, color)
 
     surface.blit(
         label,
         (
             top_left_x + play_width / 2 - (label.get_width() / 2),
-            top_left_y + play_height / 2 - label.get_height() / 2,
+            top_left_y + play_height / 3 - label.get_height(),
         ),
     )
 
@@ -221,11 +223,11 @@ def clear_rows(grid, locked):
 
 
 def draw_next_shape(shape, surface):
-    font = pygame.font.SysFont("roboto", 22)
+    font = pygame.font.SysFont(game_font, 22)
     label = font.render("Next Shape", 1, (255, 255, 255))
 
     sx = top_left_x + play_width + 50
-    sy = top_left_y + play_height / 2 - 250
+    sy = top_left_y + play_height / 2 - 200
     format = shape.shape[shape.rotation % len(shape.shape)]
 
     # Draw each block of the next shape preview
@@ -243,11 +245,29 @@ def draw_next_shape(shape, surface):
     surface.blit(label, (sx + 10, sy - 10))
 
 
-def draw_window(surface, grid, score=0):
+def update_score(newScore):
+    score = max_score()
+
+    with open("scores.txt", "w") as f:
+        if int(score) > newScore:
+            f.write(str(score))
+        else:
+            f.write(str(newScore))
+
+
+def max_score():
+    with open("scores.txt", "r") as f:
+        lines = f.readlines()
+        score = lines[0].strip()
+
+    return score
+
+
+def draw_window(surface, grid, score=0, last_score=0):
     surface.fill((25, 25, 25))
 
     pygame.font.init()
-    font = pygame.font.SysFont("roboto", 60)
+    font = pygame.font.SysFont(game_font, 60)
     label = font.render("Tetris", 1, (255, 255, 255))
 
     # Draw the label onto the surface, horizontally centered within a specific area, and vertically positioned at 30 pixels from the top of the area.
@@ -267,8 +287,17 @@ def draw_window(surface, grid, score=0):
                 0,
             )
 
-    font = pygame.font.SysFont("roboto", 32)
+    # current score
+    font = pygame.font.SysFont(game_font, 32)
     label = font.render("Score: " + str(score), 1, (255, 255, 255))
+
+    sx = top_left_x + play_width + 50
+    sy = top_left_y + play_height / 2 - 220
+
+    surface.blit(label, (sx + 10, sy - 40))
+
+    # high score
+    label = font.render("High Score: " + last_score, 1, (255, 255, 255))
 
     sx = top_left_x + play_width + 50
     sy = top_left_y + play_height / 2 - 250
@@ -286,6 +315,7 @@ def draw_window(surface, grid, score=0):
 
 
 def main(win):
+    last_score = max_score()
     locked_positions = {}
     grid = create_grid(locked_positions)
 
@@ -320,6 +350,7 @@ def main(win):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                pygame.display.quit()
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
@@ -359,21 +390,34 @@ def main(win):
             change_piece = False
             score += clear_rows(grid, locked_positions) * 10
 
-        draw_window(win, grid, score)
+        draw_window(win, grid, score, last_score)
         draw_next_shape(next_piece, win)
         pygame.display.update()
 
         if check_lost(locked_positions):
-            draw_text_middle("GAME OVER!", 80, (255,255,255), win)
+            draw_text_middle("GAME OVER!", 80, (255, 255, 255), win)
             pygame.display.update()
             pygame.time.delay(2000)
             run = False
-
-    pygame.display.quit()
+            update_score(score)
 
 
 def main_menu(win):
-    main(win)
+    # main(win)
+    run = True
+    while run:
+        win.fill((0, 0, 0))
+        draw_text_middle("START GAME!", 60, (255, 255, 255), win)
+        # draw_text_middle("Press any key to play", 30, (255, 255, 255), win, bold=False)
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN:
+                main(win)
+
+    pygame.display.quit()
 
 
 win = pygame.display.set_mode((s_width, s_height))

@@ -1,4 +1,5 @@
-# Tetris Game with Python and Pygame
+# Tetris Game
+### Made with Python and Pygame
 
 This repository contains a simple Tetris game implemented in Python using the Pygame library. Tetris is a classic tile-matching puzzle game where players manipulate falling tetrominoes (geometric shapes composed of four square blocks) to create horizontal lines without any gaps. When a line is completed, it disappears, and any blocks above it fall to fill the space.
 
@@ -8,6 +9,10 @@ This repository contains a simple Tetris game implemented in Python using the Py
 - Use of Pygame library for graphics and user interaction.
 - Customizable settings such as game speed and key bindings.
 - Score tracking and display.
+
+<div style="text-align:center">
+    <img src="img/03-22_22-53.webp" alt="Screenshot 1" width="300" style="margin: 20px;"/> <img src="img/03-22_22-58.webp" alt="Screenshot 2" width="300" style="margin: 20px;"/>
+</div>
 
 ## Prerequisites
 
@@ -22,7 +27,7 @@ Before running the Tetris game, make sure you have the following installed:
 1. Clone this repository to your local machine:
 
     ```
-    git clone <repository_url>
+    git clone https://github.com/Wayfarerdesert/tetris
     ```
 
 2. Navigate to the project directory:

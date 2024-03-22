@@ -188,7 +188,7 @@ def clear_rows(grid, locked):
     inc = 0  # Counter for the number of rows cleared
 
     # Iterate over each row of the grid starting from the bottom
-    for i in range(len(grid) -1, -1, -1):
+    for i in range(len(grid) - 1, -1, -1):
         row = grid[i]
         if (0, 0, 0) not in row:
             inc += 1
@@ -278,11 +278,18 @@ def main(win):
     clock = pygame.time.Clock()
     fall_time = 0
     fall_speed = 0.37
+    level_time = 0
 
     while run:
         grid = create_grid(locked_positions)
         fall_time += clock.get_rawtime()
+        level_time += clock.get_rawtime()
         clock.tick()
+
+        if level_time / 1000 > 5:
+            level_time = 0
+            if fall_speed > 0.12:
+                fall_speed -= 0.005
 
         if fall_time / 1000 > fall_speed:
             fall_time = 0

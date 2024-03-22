@@ -158,7 +158,16 @@ def get_shape():
 
 
 def draw_text_middle(text, size, color, surface):
-    pass
+    font = pygame.font.SysFont("roboto", size, bold=True)
+    label = font.render(text, 1, color)
+
+    surface.blit(
+        label,
+        (
+            top_left_x + play_width / 2 - (label.get_width() / 2),
+            top_left_y + play_height / 2 - label.get_height() / 2,
+        ),
+    )
 
 
 def draw_grid(surface, grid):
@@ -264,7 +273,7 @@ def draw_window(surface, grid, score=0):
     sx = top_left_x + play_width + 50
     sy = top_left_y + play_height / 2 - 250
 
-    surface.blit(label,(sx + 10, sy - 40))
+    surface.blit(label, (sx + 10, sy - 40))
 
     # Play area height with an additional space at the bottom
     play_area_height = play_height - block_size
@@ -355,7 +364,11 @@ def main(win):
         pygame.display.update()
 
         if check_lost(locked_positions):
+            draw_text_middle("GAME OVER!", 80, (255,255,255), win)
+            pygame.display.update()
+            pygame.time.delay(2000)
             run = False
+
     pygame.display.quit()
 
 
